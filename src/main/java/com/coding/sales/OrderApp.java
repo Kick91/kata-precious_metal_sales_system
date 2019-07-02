@@ -1,5 +1,6 @@
 package com.coding.sales;
 
+import com.coding.sales.datamodel.Constant;
 import com.coding.sales.datamodel.Member;
 import com.coding.sales.datamodel.MetalProduct;
 import com.coding.sales.input.OrderCommand;
@@ -12,6 +13,8 @@ import com.coding.sales.output.PaymentRepresentation;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -19,11 +22,7 @@ import java.util.*;
  * 用于打印销售凭证
  */
 public class OrderApp {
-    private static final BigDecimal THREE_THOUSAND = new BigDecimal(3000);
-    private static final BigDecimal THREE_HUNDRED_AND_FIFTY  = new BigDecimal(350);
-    private static final BigDecimal TWO_THOUSAND = new BigDecimal(2000);
-    private static final BigDecimal THIRTY  = new BigDecimal(30);
-    private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
+
 
 
 
@@ -94,49 +93,77 @@ public class OrderApp {
         String oldMemberType = member.getOldMemberType();
         BigDecimal receivables = totalPrice.subtract(totalDiscountPrice);
         memberPointsIncreased = receivables.intValue();
-        if("金卡".equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(new BigDecimal(1.50)).intValue();
-        }else if("白金卡".equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(new BigDecimal(1.80)).intValue();
-        }else if("钻石卡".equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(new BigDecimal(2.00)).intValue();
+        if(Constant.GOLD_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_FIVE).intValue();
+        }else if(Constant.WHITE_GOLD_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_EIGHT).intValue();
+        }else if(Constant.DIAMOND_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.TWO).intValue();
         }
         member.setMemberPointsIncreased(memberPointsIncreased);
         member.setNewMemberType(Member.getMemberType(memberPointsIncreased));
 
-
+        Date date = getDate(command);
         result = new OrderRepresentation(
-                    command.getOrderId(),new Date(command.getCreateTime()),command.getMemberId(),member.getMemberName(),member.getOldMemberType(),
+                    command.getOrderId(),date,command.getMemberId(),member.getMemberName(),member.getOldMemberType(),
                 member.getNewMemberType(),member.getMemberPointsIncreased(),member.getMemberPoints(),items,totalPrice,
                 discounts,totalDiscountPrice,receivables,payments,command.getDiscounts());
 
         return result;
     }
 
+    private Date getDate(OrderCommand command) {
+        SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATEFORMAT);
+        Date date = new Date();
+        try {
+             date = sdf.parse(command.getCreateTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
     private DiscountItemRepresentation calculateByPreferentialWay(List<String> discountsList,MetalProduct metalProduct,BigDecimal amount){
-        BigDecimal fullReductionPrice = BigDecimal.ZERO;
-        BigDecimal offerePrice = BigDecimal.ZERO;
         DiscountItemRepresentation discountItemRepresentation = null;
         for(String discount : discountsList){
             BigDecimal totalPrice = metalProduct.getMetalProductPrice().multiply(amount);
-            if(StringUtils.isNotEmpty(metalProduct.getMetalProductFullReduction())){
-               if("每满3000元减350".equals(discount)){
-                   fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(THREE_THOUSAND).multiply(THREE_HUNDRED_AND_FIFTY));
-               }else if("每满2000元减30".equals(discount)){
-                   fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(TWO_THOUSAND).multiply(THIRTY));
-               }else if("每满1000元减10".equals(discount)){
-                   fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(ONE_THOUSAND).multiply(BigDecimal.TEN));
-               }
-            }
-            if(StringUtils.isNotEmpty(metalProduct.getMetalProductOffere())){
-                if("95折券".equals(discount)){
-                    offerePrice = totalPrice.multiply(new BigDecimal(0.05));
-                }else if("9折券".equals(discount)){
-                    offerePrice = totalPrice.multiply(new BigDecimal(0.10));
-                }
-            }
+
+            BigDecimal fullReductionPrice = caculateFullReduction(metalProduct,totalPrice,discount);
+
+            BigDecimal offerePrice = caculateOffere(metalProduct,totalPrice,discount);
+
             discountItemRepresentation = new DiscountItemRepresentation(metalProduct.getMetalProductId(),metalProduct.getMetalProductName(),fullReductionPrice.max(offerePrice));
         }
         return discountItemRepresentation;
+    }
+
+    private BigDecimal caculateFullReduction(MetalProduct metalProduct,BigDecimal totalPrice,String discount){
+        BigDecimal fullReductionPrice = BigDecimal.ZERO;
+        if(StringUtils.isNotEmpty(metalProduct.getMetalProductFullReduction())){
+            if(Constant.FULL_3000_SUB_350.equals(discount)){
+                fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(Constant.THREE_THOUSAND).multiply(Constant.THREE_HUNDRED_AND_FIFTY));
+            }else if(Constant.FULL_2000_SUB_30.equals(discount)){
+                fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(Constant.TWO_THOUSAND).multiply(Constant.THIRTY));
+            }else if(Constant.FULL_1000_SUB_10.equals(discount)){
+                fullReductionPrice =  totalPrice.subtract(totalPrice.divideToIntegralValue(Constant.ONE_THOUSAND).multiply(BigDecimal.TEN));
+            }else if(Constant.PART_THREE_HALF.equals(discount)){
+
+            }else if(Constant.FULL_THREE_TO_ONE.equals(discount)){
+
+            }
+        }
+        return  fullReductionPrice;
+    }
+
+    private BigDecimal caculateOffere(MetalProduct metalProduct,BigDecimal totalPrice,String discount){
+        BigDecimal offerePrice = BigDecimal.ZERO;
+        if(StringUtils.isNotEmpty(metalProduct.getMetalProductOffere())){
+            if(Constant.COUPON_95.equals(discount)){
+                offerePrice = totalPrice.multiply(Constant.FIVE_PERCENT);
+            }else if(Constant.COUPON_90.equals(discount)){
+                offerePrice = totalPrice.multiply(Constant.TEN_PERCENT);
+            }
+        }
+        return offerePrice;
     }
 }
