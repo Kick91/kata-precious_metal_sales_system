@@ -1,0 +1,28 @@
+{
+  "members": [
+    {
+      "memberNo": "6236609999",
+      "memberName": "马丁",
+      "memberType": "普卡",
+      "memberPoints": "9860"
+    },
+    {
+      "memberNo": "6630009999",
+      "memberName": "王立",
+      "memberType": "金卡",
+      "memberPoints": "48860"
+    },
+    {
+      "memberNo": "8230009999",
+      "memberName": "李想",
+      "memberType": "白金卡",
+      "memberPoints": "98860"
+    },
+    {
+      "memberNo": "9230009999",
+      "memberName": "张三",
+      "memberType": "钻石卡",
+      "memberPoints": "198860"
+    }
+  ]
+}
