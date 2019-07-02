@@ -1,0 +1,60 @@
+{
+	"products": [
+		{
+			"productName": "世园会五十国钱币册",
+			"productId": "001001",
+			"productUnit": "册",
+			"productPrice": "998.00",
+			"productOffere": "",
+			"productFullReduction": ""
+		},
+		{
+			"productName": "2019北京世园会纪念银章大全40g",
+			"productId": "001002",
+			"productUnit": "盒",
+			"productPrice": "1380.00",
+			"productOffere": "可使用9折打折券",
+			"productFullReduction": ""
+		},
+		{
+			"productName": "招财进宝",
+			"productId": "003001",
+			"productUnit": "条",
+			"productPrice": "1580.00",
+			"productOffere": "可使用95折打折券",
+			"productFullReduction": ""
+		},
+		{
+			"productName": "水晶之恋",
+			"productId": "003002",
+			"productUnit": "册",
+			"productPrice": "998.00",
+			"productOffere": "",
+			"productFullReduction": "第3件半价，满3送1"
+		},
+		{
+			"productName": "中国经典钱币套装",
+			"productId": "002002",
+			"productUnit": "套",
+			"productPrice": "998.00",
+			"productOffere": "",
+			"productFullReduction": "每满2000减30，每满1000减10"
+		},
+		{
+			"productName": "守扩之羽比翼双飞4.8g",
+			"productId": "002001",
+			"productUnit": "条",
+			"productPrice": "1080.00",
+			"productOffere": "可使用95折打折券",
+			"productFullReduction": "第3件半价，满3送1"
+		},
+		{
+			"productName": "中国银象棋12g",
+			"productId": "002003",
+			"productUnit": "套",
+			"productPrice": "698.00",
+			"productOffere": "可使用9折打折券",
+			"productFullReduction": "每满3000元减350, 每满2000减30，每满1000减10"
+		}
+	]
+}
