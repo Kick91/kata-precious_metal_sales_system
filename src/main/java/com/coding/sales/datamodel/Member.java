@@ -81,7 +81,7 @@ public class Member {
 	public static Member getMemberByNo(String memberNo) throws Exception {
 		Member mb = new Member();
 		String jsonMembers = "[{'memberNo':'6236609999','memberName':'马丁','memberType':'普卡','memberPoints':'9860'},{'memberNo':'6630009999','memberName':'王立','memberType':'金卡','memberPoints':'48860'},{'memberNo':'8230009999','memberName':'李想','memberType':'白金卡','memberPoints':'98860'},{'memberNo':'9230009999','memberName':'张三','memberType':'钻石卡','memberPoints':'198860'}]";
-		List<Member> members = mb.getMembers(jsonMembers, Member.class);
+		List<Member> members = getMembers(jsonMembers, Member.class);
 		if (members.size() > 0) {
 			for (int i = 0; i < members.size(); i++) {
 				if (members.get(i).getMemberNo().equals(memberNo)) {
