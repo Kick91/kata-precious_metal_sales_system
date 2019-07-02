@@ -56,7 +56,6 @@ public class OrderApp {
         List<String> discountsList = command.getDiscounts();
         BigDecimal totalPrice = BigDecimal.ZERO;
         BigDecimal totalDiscountPrice = BigDecimal.ZERO;
-        int memberPointsIncreased = 0;
         List<OrderItemRepresentation> items = new ArrayList<>();
         List<DiscountItemRepresentation> discounts = new ArrayList<>();
         List<PaymentRepresentation> payments = new ArrayList<>();
@@ -84,24 +83,9 @@ public class OrderApp {
             payments.add(paymentRepresentation);
         }
 
-        Member member = new Member();
-        try {
-            member = Member.getMemberByNo(command.getMemberId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String oldMemberType = member.getOldMemberType();
         BigDecimal receivables = totalPrice.subtract(totalDiscountPrice);
-        memberPointsIncreased = receivables.intValue();
-        if(Constant.GOLD_CARD.equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_FIVE).intValue();
-        }else if(Constant.WHITE_GOLD_CARD.equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_EIGHT).intValue();
-        }else if(Constant.DIAMOND_CARD.equals(oldMemberType)){
-            memberPointsIncreased = receivables.multiply(Constant.TWO).intValue();
-        }
-        member.setMemberPointsIncreased(memberPointsIncreased);
-        member.setNewMemberType(Member.getMemberType(memberPointsIncreased));
+        Member member = getMemberInfo(command,receivables);
+
 
         Date date = getDate(command);
         result = new OrderRepresentation(
@@ -165,5 +149,26 @@ public class OrderApp {
             }
         }
         return offerePrice;
+    }
+
+    private Member getMemberInfo(OrderCommand command,BigDecimal receivables){
+        Member member = new Member();
+        try {
+            member = Member.getMemberByNo(command.getMemberId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String oldMemberType = member.getOldMemberType();
+        int memberPointsIncreased = receivables.intValue();
+        if(Constant.GOLD_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_FIVE).intValue();
+        }else if(Constant.WHITE_GOLD_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.ONE_POINT_EIGHT).intValue();
+        }else if(Constant.DIAMOND_CARD.equals(oldMemberType)){
+            memberPointsIncreased = receivables.multiply(Constant.TWO).intValue();
+        }
+        member.setMemberPointsIncreased(memberPointsIncreased);
+        member.setNewMemberType(Member.getMemberType(memberPointsIncreased));
+        return member;
     }
 }
