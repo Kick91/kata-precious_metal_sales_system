@@ -24,9 +24,9 @@ public class Member {
 
 	private String newMemberType;
 
-	private String memberPointsIncreased;
+	private int memberPointsIncreased;
 
-	private String memberPoints;
+	private int memberPoints;
 
 	public String getMemberNo() {
 		return memberNo;
@@ -60,19 +60,21 @@ public class Member {
 		this.newMemberType = newMemberType;
 	}
 
-	public String getMemberPointsIncreased() {
+	
+
+	public int getMemberPointsIncreased() {
 		return memberPointsIncreased;
 	}
 
-	public void setMemberPointsIncreased(String memberPointsIncreased) {
+	public void setMemberPointsIncreased(int memberPointsIncreased) {
 		this.memberPointsIncreased = memberPointsIncreased;
 	}
 
-	public String getMemberPoints() {
+	public int getMemberPoints() {
 		return memberPoints;
 	}
 
-	public void setMemberPoints(String memberPoints) {
+	public void setMemberPoints(int memberPoints) {
 		this.memberPoints = memberPoints;
 	}
 
@@ -86,6 +88,7 @@ public class Member {
 		if (members.size() > 0) {
 			for (int i = 0; i < members.size(); i++) {
 				if (members.get(i).getMemberNo().equals(memberNo)) {
+					members.get(i).setOldMemberType(getMemberType(members.get(i).getMemberPoints()+members.get(i).getMemberPointsIncreased()));
 					mb = members.get(i);
 					break;
 				}
@@ -101,6 +104,14 @@ public class Member {
 
 		return mb;
 	};
+	
+	
+	public static String getMemberType(int i) {
+		String memberType="普卡";
+		
+		return memberType;
+		
+	}
 
 	public static <T> T getMember(String jsonString, Class cls) {
 		T t = null;
