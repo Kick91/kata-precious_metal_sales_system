@@ -80,11 +80,8 @@ public class Member {
 
 	public static Member getMemberByNo(String memberNo) throws Exception {
 		Member mb = new Member();
-
 		String jsonMembers = "[{'memberNo':'6236609999','memberName':'马丁','memberType':'普卡','memberPoints':'9860'},{'memberNo':'6630009999','memberName':'王立','memberType':'金卡','memberPoints':'48860'},{'memberNo':'8230009999','memberName':'李想','memberType':'白金卡','memberPoints':'98860'},{'memberNo':'9230009999','memberName':'张三','memberType':'钻石卡','memberPoints':'198860'}]";
-
 		List<Member> members = mb.getMembers(jsonMembers, Member.class);
-
 		if (members.size() > 0) {
 			for (int i = 0; i < members.size(); i++) {
 				if (members.get(i).getMemberNo().equals(memberNo)) {
@@ -93,11 +90,9 @@ public class Member {
 					break;
 				}
 			}
-
 		} else {
 			throw new Exception("客户信息不存在");
 		}
-
 		if (mb == null) {
 			throw new Exception("客户信息不存在");
 		}
@@ -106,12 +101,29 @@ public class Member {
 	};
 	
 	
-	public static String getMemberType(int i) {
+	/** 判断客户等级
+	 * @param Points
+	 * @return
+	 */
+	public static String getMemberType(int Points) {
 		String memberType="普卡";
+		if(Points<10000) {
+			memberType="普卡";
+		}else if(Points>=10000&&Points<50000) {
+			memberType="金卡";
+		}else if(Points>=50000&&Points<100000) {
+			memberType="白金卡";
+		}else if(Points>=100000) {
+			memberType="钻石卡";
+		}else {
+			memberType="普卡";
+		}
 		
 		return memberType;
 		
 	}
+	
+
 
 	public static <T> T getMember(String jsonString, Class cls) {
 		T t = null;
