@@ -25,20 +25,7 @@ public class OrderApp {
     private static final BigDecimal THIRTY  = new BigDecimal(30);
     private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
 
-    private static Map<String, BigDecimal> initOffereMap = new HashMap<String, BigDecimal>();
-    private static Map<String,String> initFullReductionMap = new HashMap<String, String>();
-    private static List<MetalProduct> initMetalProdutslist = new ArrayList<MetalProduct>();
-    static {
 
-        MetalProduct metalProduct = new MetalProduct("001001","世园会五十国钱币册",
-                "册",998.00,"","");
-        initMetalProdutslist.add(metalProduct);
-
-        initOffereMap.put("9折券",new BigDecimal(0.90));
-        initOffereMap.put("9折券",new BigDecimal(0.95));
-
-        initFullReductionMap.put("每满3000元减350","");
-    }
 
 
     public static void main(String[] args) {
@@ -92,12 +79,10 @@ public class OrderApp {
             OrderItemRepresentation orderItemRepresentation = new OrderItemRepresentation(metalProduct.getMetalProductId(),
                     metalProduct.getMetalProductName(),metalProduct.getMetalProductPrice(),amount,itemTotalPrice);
             items.add(orderItemRepresentation);
-
-            for (PaymentCommand paymentCommand : command.getPayments()){
-                PaymentRepresentation paymentRepresentation = new PaymentRepresentation(paymentCommand.getType(),paymentCommand.getAmount());
-                payments.add(paymentRepresentation);
-            }
-
+        }
+        for (PaymentCommand paymentCommand : command.getPayments()){
+            PaymentRepresentation paymentRepresentation = new PaymentRepresentation(paymentCommand.getType(),paymentCommand.getAmount());
+            payments.add(paymentRepresentation);
         }
 
         Member member = new Member();
@@ -107,20 +92,21 @@ public class OrderApp {
             e.printStackTrace();
         }
         String oldMemberType = member.getOldMemberType();
-        memberPointsIncreased = totalPrice.intValue();
+        BigDecimal receivables = totalPrice.subtract(totalDiscountPrice);
+        memberPointsIncreased = receivables.intValue();
         if("金卡".equals(oldMemberType)){
-            memberPointsIncreased = totalPrice.multiply(new BigDecimal(1.50)).intValue();
+            memberPointsIncreased = receivables.multiply(new BigDecimal(1.50)).intValue();
         }else if("白金卡".equals(oldMemberType)){
-            memberPointsIncreased = totalPrice.multiply(new BigDecimal(1.80)).intValue();
+            memberPointsIncreased = receivables.multiply(new BigDecimal(1.80)).intValue();
         }else if("钻石卡".equals(oldMemberType)){
-            memberPointsIncreased = totalPrice.multiply(new BigDecimal(2.00)).intValue();
+            memberPointsIncreased = receivables.multiply(new BigDecimal(2.00)).intValue();
         }
         member.setMemberPointsIncreased(memberPointsIncreased);
         member.setNewMemberType(Member.getMemberType(memberPointsIncreased));
-        BigDecimal receivables = totalPrice.subtract(totalDiscountPrice);
+
 
         result = new OrderRepresentation(
-                    command.getOrderId(),new Date(),command.getMemberId(),member.getMemberName(),member.getOldMemberType(),
+                    command.getOrderId(),new Date(command.getCreateTime()),command.getMemberId(),member.getMemberName(),member.getOldMemberType(),
                 member.getNewMemberType(),member.getMemberPointsIncreased(),member.getMemberPoints(),items,totalPrice,
                 discounts,totalDiscountPrice,receivables,payments,command.getDiscounts());
 
