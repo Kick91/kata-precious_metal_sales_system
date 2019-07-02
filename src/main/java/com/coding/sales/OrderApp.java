@@ -168,6 +168,7 @@ public class OrderApp {
             memberPointsIncreased = receivables.multiply(Constant.TWO).intValue();
         }
         member.setMemberPointsIncreased(memberPointsIncreased);
+        member.setMemberPoints(member.getMemberPoints() + memberPointsIncreased);
         member.setNewMemberType(Member.getMemberType(memberPointsIncreased));
         return member;
     }
